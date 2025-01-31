@@ -1,0 +1,58 @@
+[
+    {
+        "_id": "2f7e9eee-9c27-421e-8278-93432e1f1193",
+        "colId": "history",
+        "containerId": "",
+        "name": "https://localhost:4000/api/admin/add-doctor",
+        "url": "https://localhost:4000/api/admin/add-doctor",
+        "method": "POST",
+        "sortNum": 0,
+        "created": "2025-01-29T15:12:09.846Z",
+        "modified": "2025-01-29T15:12:09.846Z",
+        "headers": [],
+        "body": {
+            "type": "formdata",
+            "raw": "",
+            "form": [
+                {
+                    "name": "name",
+                    "value": "test name"
+                },
+                {
+                    "name": "email",
+                    "value": "test email"
+                },
+                {
+                    "name": "password",
+                    "value": "12345678"
+                },
+                {
+                    "name": "degree",
+                    "value": "MBBS"
+                },
+                {
+                    "name": "experience",
+                    "value": "4 Years"
+                },
+                {
+                    "name": "about",
+                    "value": "test about"
+                },
+                {
+                    "name": "fees",
+                    "value": "40"
+                },
+                {
+                    "name": "address",
+                    "value": "\"{\"line1\":\"address 1\"}\""
+                }
+            ],
+            "files": [
+                {
+                    "name": "",
+                    "value": "../frontend/src/assets/upload_area.png"
+                }
+            ]
+        }
+    }
+]
