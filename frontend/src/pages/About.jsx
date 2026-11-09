@@ -12,23 +12,21 @@ const About = () => {
           <img className='w-full md:max-w-[360px] object-cover' src={assets.about_image} alt="" />
           <div className='flex flex-col justify-center gap-6 md:w-2/4 text-sm text-gray-600'>
               <p>
-                Welcome to Prescripto, Your Trusted Partner in managing Your Healthcare Neesds Conveniently And Efficient.
-                At Prescripto, We Understand The Challenges Individuals Face When it Comes To Scheduling Doctors
-                Appointments And Managing Thier Health Rcords. 
+                Welcome to St Theresa's Specialist Hospital, your trusted partner in managing your healthcare needs
+                conveniently and efficiently. We understand the challenges patients face when it comes to scheduling
+                doctor appointments and keeping track of their health records.
               </p>
               <p>
-                Priscripto is Commited To Exellence in Healthcare Technology. we continuosly Strive To Enhance Our
-                Platform, Integrating The Latest Advancements To Improve User Experience And Deliver Superior Service.
-                Wheather Your're Booking Your First Appointment or Managing Ongoing Care, Prescripto is Here To Support You
-                Every Step of The Way 
+                St Theresa's is committed to excellence in healthcare. We continuously strive to improve our services,
+                bringing together experienced specialists and modern technology to deliver superior care. Whether
+                you're booking your first appointment or managing ongoing treatment, we are here to support you every
+                step of the way.
               </p>
-              <b className='text-gray-800'>
-                Our Vision
-              </b>
+              <b className='text-gray-800'>Our Vision</b>
               <p>
-                Our Vission At Priscripto is To Create A Seamless Healthcare Experience For Every User, We Aim To Bridge The 
-                Gap Between Patients And Healthcare Providers, Making it Easiar For You To Acces The Core You Need, When
-                You Need It.
+                Our vision is to create a seamless healthcare experience for every patient. We aim to bridge the gap
+                between patients and healthcare providers, making it easier for you to access the care you need,
+                when you need it.
               </p>
           </div>
         </div>
@@ -38,19 +36,19 @@ const About = () => {
         </div>
 
          <div className='flex flex-col md:flex-row mb-20'>
-        <div className='border px-10 md:px-16 px sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-300 text-gray-600 cursor-pointer'>
+        <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
               <b>Efficiency:</b>
               <p>Streamlined appointment scheduling that fits into your busy lifestyle.</p>
 
         </div>
-        <div className='border px-10 md:px-16 px sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-300 text-gray-600 cursor-pointer'>
+        <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
               <b>Convenience:</b>
               <p>Access to a network of trusted healthcare professionals in your area.</p>
         </div>
 
-        <div className='border px-10 md:px-16 px sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-300 text-gray-600 cursor-pointer'>
+        <div className='border px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5 text-[15px] hover:bg-primary hover:text-white transition-all duration-300 text-gray-600 cursor-pointer'>
              <b>Personalization:</b>
-             <p>Tailored recommendations and remainders to help you  stay on top of your health.</p>
+             <p>Tailored recommendations and reminders to help you stay on top of your health.</p>
 
         </div>
           

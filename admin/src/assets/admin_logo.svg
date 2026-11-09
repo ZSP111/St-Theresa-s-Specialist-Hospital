@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="60" viewBox="0 0 300 60">
+  <rect x="0" y="4" width="52" height="52" rx="14" fill="#5F6FFF"/><path d="M21 15h10v10h10v10H31v10H21V35H11V25h10z" fill="#fff"/>
+  <text x="64" y="31" font-family="Outfit, Poppins, Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#1F2A6B">St Theresa's</text>
+  <text x="65" y="50" font-family="Outfit, Poppins, Arial, Helvetica, sans-serif" font-size="12" font-weight="500" fill="#6B7280">Dashboard Panel</text>
+</svg>

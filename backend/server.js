@@ -1,27 +1,21 @@
-import express from 'express'
-import cors from 'cors'
 import 'dotenv/config'
+import app from './app.js'
 import connectDB from './config/mongodb.js'
-import connetCloudinary from './config/cloudinary.js'
-import adminRouter from './routes/adminRoute.js'
+import connectCloudinary from './config/cloudinary.js'
 
-
-// app config
-const app = express()
 const port = process.env.PORT || 4000
-connectDB()
-connetCloudinary()
 
-// middleware
-app.use(express.json())
-app.use(cors())
+const start = async () => {
+    if (!process.env.JWT_SECRET) {
+        console.error("JWT_SECRET is not set. Copy backend/.env.example to backend/.env and fill it in.")
+        process.exit(1)
+    }
+    connectCloudinary()
+    await connectDB()
+    app.listen(port, () => console.log("Server started on port", port))
+}
 
-// api endpoints
-app.use('/api/admin',adminRouter)
-
-
-app.get('/',(req,res) => {
-    res.send('Hello ZSP!')
+start().catch((error) => {
+    console.error("Failed to start server:", error.message)
+    process.exit(1)
 })
-
-app.listen(port, ()=> console.log("Server Started",port))
