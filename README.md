@@ -83,8 +83,10 @@ downloads a temporary in-memory MongoDB the first time it runs.
 - **Backend**: any Node host (Render, Railway, a VPS...). Set the environment variables above.
   Use Cloudinary in production, because most hosts wipe local files on restart.
 - **Frontend / Admin**: build with `npm run build` and host the `dist/` folder on Vercel, Netlify, etc.
-  Set `VITE_BACKEND_URL` to the deployed API URL before building, and configure the host to
-  serve `index.html` for all routes (SPA fallback).
+  Set `VITE_BACKEND_URL` to the deployed API URL before building. SPA fallback rules are included
+  (`vercel.json`, `public/_redirects` for Netlify). A Vercel project pointed at the repository root
+  builds the patient website via the root `vercel.json`; for the dashboard panel, create a second
+  project with **Root Directory** set to `admin`.
 - Set `FRONTEND_URL` on the backend to the deployed patient website URL for Paystack redirects.
 
 ## API overview
