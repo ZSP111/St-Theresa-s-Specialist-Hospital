@@ -1,27 +1,27 @@
-import express from 'express'
-import cors from 'cors'
 import 'dotenv/config'
+import app from './app.js'
 import connectDB from './config/mongodb.js'
-import connetCloudinary from './config/cloudinary.js'
-import adminRouter from './routes/adminRoute.js'
+import connectCloudinary from './config/cloudinary.js'
+import doctorModel from './models/doctorModel.js'
+import seedDoctors from './utils/seedDoctors.js'
 
-
-// app config
-const app = express()
 const port = process.env.PORT || 4000
-connectDB()
-connetCloudinary()
 
-// middleware
-app.use(express.json())
-app.use(cors())
+const start = async () => {
+    if (!process.env.JWT_SECRET) {
+        console.warn("JWT_SECRET is not set - using a secret derived from MONGODB_URI. Set JWT_SECRET for best security.")
+    }
+    connectCloudinary()
+    await connectDB()
 
-// api endpoints
-app.use('/api/admin',adminRouter)
+    // AUTO_SEED=true loads the sample doctors on first start (when there are no doctors yet)
+    if (process.env.AUTO_SEED === 'true' && await doctorModel.countDocuments() === 0) {
+        await seedDoctors()
+    }
+    app.listen(port, () => console.log("Server started on port", port))
+}
 
-
-app.get('/',(req,res) => {
-    res.send('Hello ZSP!')
+start().catch((error) => {
+    console.error("Failed to start server:", error.message)
+    process.exit(1)
 })
-
-app.listen(port, ()=> console.log("Server Started",port))

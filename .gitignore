@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+dist-ssr/
+
+# Local image uploads (used when Cloudinary is not configured)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Logs / OS / editor
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea

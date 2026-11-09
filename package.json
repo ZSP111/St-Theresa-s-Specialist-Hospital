@@ -1,0 +1,15 @@
+{
+  "name": "st-theresas-specialist-hospital",
+  "private": true,
+  "description": "Appointment booking system for ST THERESA'S SPECIALIST HOSPITAL",
+  "scripts": {
+    "install-all": "npm install --prefix backend && npm install --prefix frontend && npm install --prefix admin",
+    "backend": "npm run server --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "admin": "npm run dev --prefix admin",
+    "seed": "npm run seed --prefix backend",
+    "test": "npm test --prefix backend",
+    "build": "npm run build --prefix frontend && npm run build --prefix admin && node scripts/combine-dist.js"
+  },
+  "type": "module"
+}

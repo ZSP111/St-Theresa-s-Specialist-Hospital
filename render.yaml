@@ -1,0 +1,40 @@
+# Render Blueprint: deploys the backend API.
+# In Render: New + -> Blueprint -> pick this repository. You will be asked for the values marked sync: false.
+services:
+  - type: web
+    name: st-theresas-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: st-theresas-hospital
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: AUTO_SEED
+        value: "true"
+      - key: SEED_DOCTOR_PASSWORD
+        sync: false
+      - key: CLOUDINARY_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: CURRENCY
+        value: NGN
