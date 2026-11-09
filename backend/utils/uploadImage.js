@@ -21,6 +21,6 @@ const uploadImage = async (filePath, baseUrl) => {
     return `${baseUrl}/uploads/${fileName}`
 }
 
-export const getBaseUrl = (req) => process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`
+export const getBaseUrl = (req) => process.env.BACKEND_URL || process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`
 
 export default uploadImage

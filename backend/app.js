@@ -4,6 +4,7 @@ import adminRouter from './routes/adminRoute.js'
 import doctorRouter from './routes/doctorRoute.js'
 import userRouter from './routes/userRoute.js'
 import { UPLOADS_DIR } from './utils/uploadImage.js'
+import { SEED_IMAGES_DIR } from './utils/seedDoctors.js'
 
 const app = express()
 app.set('trust proxy', true)
@@ -12,6 +13,7 @@ app.set('trust proxy', true)
 app.use(express.json())
 app.use(cors())
 app.use('/uploads', express.static(UPLOADS_DIR))
+app.use('/seed-images', express.static(SEED_IMAGES_DIR))
 
 // api endpoints
 app.use('/api/admin', adminRouter)

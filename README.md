@@ -67,6 +67,7 @@ a doctor's email (e.g. `richard.james@sttheresas.com`) and their password.
 | `PAYSTACK_SECRET_KEY` | no | Enables "Pay online" (use `sk_test_...` while testing) |
 | `CURRENCY` | no | Payment currency (default `NGN`) |
 | `SEED_DOCTOR_PASSWORD` | no | Password for doctors created by `npm run seed` |
+| `AUTO_SEED` | no | `true` loads the sample doctors on start when there are none (set by `render.yaml`) |
 
 ## Tests
 
@@ -78,16 +79,57 @@ Runs unit tests and an end-to-end API test (admin → add doctor → patient sig
 double-booking protection → doctor completes → dashboards → cancellation). The end-to-end test
 downloads a temporary in-memory MongoDB the first time it runs.
 
-## Deployment
+## Go live (step by step)
 
-- **Backend**: any Node host (Render, Railway, a VPS...). Set the environment variables above.
-  Use Cloudinary in production, because most hosts wipe local files on restart.
-- **Frontend / Admin**: build with `npm run build` and host the `dist/` folder on Vercel, Netlify, etc.
-  Set `VITE_BACKEND_URL` to the deployed API URL before building. SPA fallback rules are included
-  (`vercel.json`, `public/_redirects` for Netlify). A Vercel project pointed at the repository root
-  builds the patient website via the root `vercel.json`; for the dashboard panel, create a second
-  project with **Root Directory** set to `admin`.
-- Set `FRONTEND_URL` on the backend to the deployed patient website URL for Paystack redirects.
+You need three free accounts: **MongoDB Atlas** (database), **Render** (backend API) and
+**Vercel** or **Netlify** (websites). Cloudinary (photos) and Paystack (payments) are optional.
+
+### 1. Database - MongoDB Atlas
+1. Log in at https://cloud.mongodb.com and open your cluster (or create a free one).
+2. **Database Access** → change the database user's password (the old one was exposed in git history).
+3. **Network Access** → *Add IP Address* → *Allow access from anywhere* (`0.0.0.0/0`), so Render can connect.
+4. **Connect** → *Drivers* → copy the connection string, e.g.
+   `mongodb+srv://myuser:<password>@cluster0.abcde.mongodb.net/` and put your password in place of `<password>`.
+
+### 2. Backend API - Render
+1. Sign up at https://render.com with your GitHub account.
+2. **New +** → **Blueprint** → choose this repository (branch `main`). Render reads `render.yaml`.
+3. Fill in the values it asks for:
+   | Setting | What to enter |
+   | --- | --- |
+   | `MONGODB_URI` | the connection string from step 1 |
+   | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | the login you want for the admin panel |
+   | `FRONTEND_URL` | your patient website URL, e.g. `https://st-theresa-s-specialist-hospital.vercel.app` |
+   | `SEED_DOCTOR_PASSWORD` | password for the 15 sample doctors (blank = `Doctor@12345`) |
+   | `CLOUDINARY_*` | your Cloudinary keys - **recommended**, otherwise photos uploaded later are lost when Render restarts |
+   | `PAYSTACK_SECRET_KEY` | optional, enables "Pay online" |
+4. Click **Apply**. After a few minutes you get a URL like `https://st-theresas-api.onrender.com`.
+   Opening it should show *"ST THERESA'S SPECIALIST HOSPITAL API is running"*, and
+   `/api/doctor/list` should list the 15 sample doctors (loaded automatically on first start).
+
+The free Render plan sleeps after 15 minutes without visitors, so the first request after a pause takes ~30-60 seconds.
+
+### 3. Websites - Vercel
+1. Patient website: in your Vercel project whose Root Directory is the repository root, go to
+   **Settings → Environment Variables** and add `VITE_BACKEND_URL` = your Render URL. Redeploy.
+2. Dashboard panel: **Add New → Project** → this repository → **Root Directory** `admin` →
+   add the same `VITE_BACKEND_URL` → Deploy.
+3. Delete any extra Vercel projects connected to this repository.
+
+(On Netlify instead: set base directory `frontend` or `admin`, build command `npm run build`,
+publish directory `dist`, and the same `VITE_BACKEND_URL`.)
+
+### 4. Check it
+Open the patient website → doctors appear → create an account → book an appointment.
+Open the dashboard → log in as admin → the booking appears.
+
+## Deployment notes
+
+- `vercel.json` at the root builds the patient website from the repository root; SPA fallback rules
+  are included (`vercel.json`, `public/_redirects` for Netlify).
+- Set `VITE_BACKEND_URL` **before** building - it is baked into the website at build time.
+- Use Cloudinary in production: Render's disk is wiped on every restart. Sample doctor photos are
+  served from the repository and are not affected.
 
 ## API overview
 

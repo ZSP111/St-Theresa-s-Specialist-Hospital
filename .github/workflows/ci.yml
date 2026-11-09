@@ -29,19 +29,25 @@ jobs:
         run: npm test
         env:
           MONGODB_TEST_URI: mongodb://localhost:27017
-      - name: Check the server boots
+      - name: Check the server boots, auto-seeds and serves doctor photos
         env:
           MONGODB_URI: mongodb://localhost:27017
+          MONGODB_DB_NAME: ci-boot
           JWT_SECRET: ci-secret
           ADMIN_EMAIL: admin@ci.test
           ADMIN_PASSWORD: ci-password
+          AUTO_SEED: 'true'
           PORT: 4100
         run: |
           node server.js &
-          for i in $(seq 1 20); do curl -sf http://localhost:4100/ && break; sleep 1; done
-          curl -sf http://localhost:4100/api/doctor/list | grep '"success":true'
-          npm run seed
-          curl -sf http://localhost:4100/api/doctor/list | grep 'Dr. Richard James'
+          for i in $(seq 1 30); do curl -sf http://localhost:4100/ && break; sleep 1; done
+          LIST=$(curl -sf http://localhost:4100/api/doctor/list)
+          echo "$LIST" | grep -q 'Dr. Richard James'
+          test "$(echo "$LIST" | grep -o '"_id"' | wc -l)" -eq 15
+          IMG=$(echo "$LIST" | grep -o 'http://localhost:4100/seed-images/doc1.png' | head -1)
+          curl -sf -o /dev/null "$IMG"
+          npm run seed | grep -q '0 doctor(s) added'
+          echo "Server, auto-seed and seed images OK"
 
   frontends:
     runs-on: ubuntu-latest
