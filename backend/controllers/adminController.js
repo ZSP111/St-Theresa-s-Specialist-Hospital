@@ -67,7 +67,7 @@ const addDoctor = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt)
 
       // upload image (Cloudinary or local storage)
-      const imageUrl = await uploadImage(imageFile.path, getBaseUrl(req))
+      const imageUrl = await uploadImage(imageFile.path, getBaseUrl(req), imageFile.mimetype)
 
       const doctorData = {
          name,

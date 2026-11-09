@@ -9,6 +9,7 @@
     "admin": "npm run dev --prefix admin",
     "seed": "npm run seed --prefix backend",
     "test": "npm test --prefix backend",
-    "build": "npm run build --prefix frontend && npm run build --prefix admin"
-  }
+    "build": "npm run build --prefix frontend && npm run build --prefix admin && node scripts/combine-dist.js"
+  },
+  "type": "module"
 }

@@ -10,9 +10,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export const SEED_IMAGES_DIR = path.join(__dirname, '..', 'seed', 'images')
 const doctors = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seed', 'doctors.json'), 'utf8'))
 
-// Public URL of this backend outside of a request (Render sets RENDER_EXTERNAL_URL automatically)
+// Public URL of this backend outside of a request (Render sets RENDER_EXTERNAL_URL automatically).
+// On Vercel the API shares the website's domain, so a relative URL is used.
 export const publicBaseUrl = () =>
-    process.env.BACKEND_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 4000}`
+    process.env.VERCEL ? '' : process.env.BACKEND_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${process.env.PORT || 4000}`
 
 // Adds the sample doctors that don't exist yet. Photos go to Cloudinary when configured,
 // otherwise they are served straight from the repository at /seed-images (survives restarts).
@@ -31,7 +32,7 @@ const seedDoctors = async ({ reset = false, log = console.log } = {}) => {
         if (await doctorModel.findOne({ email: doc.email })) continue
         const image = isCloudinaryConfigured()
             ? await uploadImage(path.join(SEED_IMAGES_DIR, doc.image), baseUrl)
-            : `${baseUrl}/seed-images/${doc.image}`
+            : `${baseUrl}/api/seed-images/${doc.image}`
         await doctorModel.create({ ...doc, image, password: hashedPassword, date: Date.now() })
         created++
         log(`Added ${doc.name} (${doc.email})`)

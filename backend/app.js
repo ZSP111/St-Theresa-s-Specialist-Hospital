@@ -13,7 +13,7 @@ app.set('trust proxy', true)
 app.use(express.json())
 app.use(cors())
 app.use('/uploads', express.static(UPLOADS_DIR))
-app.use('/seed-images', express.static(SEED_IMAGES_DIR))
+app.use('/api/seed-images', express.static(SEED_IMAGES_DIR))
 
 // api endpoints
 app.use('/api/admin', adminRouter)

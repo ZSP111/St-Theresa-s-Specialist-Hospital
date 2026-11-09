@@ -1,6 +1,15 @@
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
 
-export const createToken = (payload) => jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' })
+// JWT_SECRET if set; otherwise a secret derived from the (private) database connection string,
+// so the app works with minimal configuration.
+export const getJwtSecret = () => {
+    if (process.env.JWT_SECRET) return process.env.JWT_SECRET
+    if (!process.env.MONGODB_URI) throw new Error('Server is not configured: set MONGODB_URI')
+    return crypto.createHash('sha256').update(`st-theresas-jwt:${process.env.MONGODB_URI}`).digest('hex')
+}
+
+export const createToken = (payload) => jwt.sign(payload, getJwtSecret(), { expiresIn: '7d' })
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 

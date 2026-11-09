@@ -44,7 +44,7 @@ jobs:
           LIST=$(curl -sf http://localhost:4100/api/doctor/list)
           echo "$LIST" | grep -q 'Dr. Richard James'
           test "$(echo "$LIST" | grep -o '"_id"' | wc -l)" -eq 15
-          IMG=$(echo "$LIST" | grep -o 'http://localhost:4100/seed-images/doc1.png' | head -1)
+          IMG=$(echo "$LIST" | grep -o 'http://localhost:4100/api/seed-images/doc1.png' | head -1)
           curl -sf -o /dev/null "$IMG"
           npm run seed | grep -q '0 doctor(s) added'
           echo "Server, auto-seed and seed images OK"
@@ -67,3 +67,20 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+
+  vercel-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install (same command as vercel.json)
+        run: npm install --prefix frontend && npm install --prefix admin && npm install --prefix backend --omit=dev
+      - name: Build (same command as vercel.json)
+        run: npm run build
+      - name: Check output
+        run: |
+          test -f frontend/dist/index.html
+          test -f frontend/dist/admin/index.html
+          grep -q '/admin/assets/' frontend/dist/admin/index.html

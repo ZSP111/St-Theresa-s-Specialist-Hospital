@@ -9,8 +9,7 @@ const port = process.env.PORT || 4000
 
 const start = async () => {
     if (!process.env.JWT_SECRET) {
-        console.error("JWT_SECRET is not set. Copy backend/.env.example to backend/.env and fill it in.")
-        process.exit(1)
+        console.warn("JWT_SECRET is not set - using a secret derived from MONGODB_URI. Set JWT_SECRET for best security.")
     }
     connectCloudinary()
     await connectDB()

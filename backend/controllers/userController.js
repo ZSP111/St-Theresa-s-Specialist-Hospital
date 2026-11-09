@@ -93,7 +93,7 @@ const updateProfile = async (req, res) => {
 
         const update = { name, phone, address: parsedAddress, dob, gender }
         if (imageFile) {
-            update.image = await uploadImage(imageFile.path, getBaseUrl(req))
+            update.image = await uploadImage(imageFile.path, getBaseUrl(req), imageFile.mimetype)
         }
 
         await userModel.findByIdAndUpdate(req.userId, update)
@@ -230,7 +230,7 @@ const paymentPaystack = async (req, res) => {
         }
 
         const reference = `STH-${appointmentId}-${crypto.randomBytes(4).toString('hex')}`
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+        const frontendUrl = process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:5173'
 
         const data = await paystackRequest('/transaction/initialize', {
             method: 'POST',

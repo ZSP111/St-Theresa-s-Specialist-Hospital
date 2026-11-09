@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { getJwtSecret } from '../utils/helpers.js'
 
 // Builds a middleware that reads a JWT from the given header and checks its role.
 const makeAuth = (headerName, role, onSuccess) => (req, res, next) => {
@@ -7,7 +8,7 @@ const makeAuth = (headerName, role, onSuccess) => (req, res, next) => {
         if (!token) {
             return res.json({ success: false, message: 'Not authorized. Please log in again.' })
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, getJwtSecret())
         if (decoded.role !== role) {
             return res.json({ success: false, message: 'Not authorized. Please log in again.' })
         }
