@@ -9,11 +9,12 @@ import { createToken, releaseSlot } from "../utils/helpers.js"
 // API for admin login
 const loginAdmin = async (req, res) => {
    try {
-      const { email, password } = req.body
+      const { password } = req.body
+      const email = String(req.body.email || '').trim().toLowerCase()
       if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
          return res.json({ success: false, message: "Admin credentials are not configured on the server" })
       }
-      if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+      if (email === process.env.ADMIN_EMAIL.trim().toLowerCase() && password === process.env.ADMIN_PASSWORD) {
          const token = createToken({ role: 'admin', email })
          return res.json({ success: true, token })
       }
@@ -27,7 +28,8 @@ const loginAdmin = async (req, res) => {
 // API for adding doctor
 const addDoctor = async (req, res) => {
    try {
-      const { name, email, password, speciality, degree, experience, about, fees, address } = req.body
+      const email = String(req.body.email || '').trim().toLowerCase()
+      const { name, password, speciality, degree, experience, about, fees, address } = req.body
       const imageFile = req.file
 
       // checking for all data to add doctor

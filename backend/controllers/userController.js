@@ -10,7 +10,8 @@ import { createToken, isValidSlot, slotToDate, reserveSlot, releaseSlot } from '
 // API to register a user
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { name, password } = req.body
+        const email = String(req.body.email || '').trim().toLowerCase()
 
         if (!name || !email || !password) {
             return res.json({ success: false, message: 'Missing details' })
@@ -41,7 +42,8 @@ const registerUser = async (req, res) => {
 // API for user login
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body
+        const { password } = req.body
+        const email = String(req.body.email || '').trim().toLowerCase()
         const user = await userModel.findOne({ email })
         if (!user) {
             return res.json({ success: false, message: 'User does not exist' })

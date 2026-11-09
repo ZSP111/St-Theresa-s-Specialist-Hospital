@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+        env:
+          MONGOMS_DISABLE_POSTINSTALL: '1'
+      - name: Run API tests against MongoDB
+        run: npm test
+        env:
+          MONGODB_TEST_URI: mongodb://localhost:27017
+      - name: Check the server boots
+        env:
+          MONGODB_URI: mongodb://localhost:27017
+          JWT_SECRET: ci-secret
+          ADMIN_EMAIL: admin@ci.test
+          ADMIN_PASSWORD: ci-password
+          PORT: 4100
+        run: |
+          node server.js &
+          for i in $(seq 1 20); do curl -sf http://localhost:4100/ && break; sleep 1; done
+          curl -sf http://localhost:4100/api/doctor/list | grep '"success":true'
+          npm run seed
+          curl -sf http://localhost:4100/api/doctor/list | grep 'Dr. Richard James'
+
+  frontends:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [frontend, admin]
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

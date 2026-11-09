@@ -18,14 +18,20 @@ const IMAGE = path.join(__dirname, '..', 'seed', 'images', 'doc1.png')
 let mongod, server, base, mongoose, skipReason = ''
 
 before(async () => {
-    try {
-        const { MongoMemoryServer } = await import('mongodb-memory-server')
-        mongod = await MongoMemoryServer.create()
-    } catch (error) {
-        skipReason = `MongoDB in-memory server unavailable: ${error.message.split('\n')[0]}`
-        return
+    // Use a provided MongoDB (e.g. a CI service container), otherwise an in-memory server
+    let uri = process.env.MONGODB_TEST_URI
+    if (!uri) {
+        try {
+            const { MongoMemoryServer } = await import('mongodb-memory-server')
+            mongod = await MongoMemoryServer.create()
+            uri = mongod.getUri()
+        } catch (error) {
+            skipReason = `MongoDB in-memory server unavailable: ${error.message.split('\n')[0]}`
+            return
+        }
     }
-    process.env.MONGODB_URI = mongod.getUri()
+    process.env.MONGODB_URI = uri
+    process.env.MONGODB_DB_NAME = `st-theresas-test-${Date.now()}`
     mongoose = (await import('mongoose')).default
     const connectDB = (await import('../config/mongodb.js')).default
     const app = (await import('../app.js')).default
@@ -36,6 +42,7 @@ before(async () => {
 
 after(async () => {
     server?.close()
+    await mongoose?.connection?.db?.dropDatabase()
     await mongoose?.disconnect()
     await mongod?.stop()
 })
@@ -89,7 +96,9 @@ test('full booking flow: admin -> doctor -> patient', async (t) => {
     assert.equal((await call('POST', '/api/user/register', { body: { name: 'P', email: 'bad', password: '12345678' } })).success, false)
     assert.equal((await call('POST', '/api/user/register', { body: { name: 'P', email: 'p@test.com', password: 'short' } })).success, false)
     assert.ok((await call('POST', '/api/user/register', { body: { name: 'Pat', email: 'p@test.com', password: 'patient-pass' } })).success)
-    const login = await call('POST', '/api/user/login', { body: { email: 'p@test.com', password: 'patient-pass' } })
+    assert.equal((await call('POST', '/api/user/register', { body: { name: 'Dup', email: 'P@Test.com', password: 'patient-pass' } })).success, false, 'duplicate email (any case) must fail')
+    assert.equal((await call('POST', '/api/user/login', { body: { email: 'p@test.com', password: 'wrong-pass' } })).success, false)
+    const login = await call('POST', '/api/user/login', { body: { email: ' P@TEST.com ', password: 'patient-pass' } })
     assert.ok(login.success)
     const token = login.token
     const profile = await call('GET', '/api/user/get-profile', { headers: { token } })
@@ -141,8 +150,8 @@ test('full booking flow: admin -> doctor -> patient', async (t) => {
     const second = await call('POST', '/api/user/book-appointment', { headers: { token }, body: { docId, slotDate, slotTime: '11:00 AM' } })
     assert.ok(second.success)
     assert.ok((await call('POST', '/api/user/cancel-appointment', { headers: { token }, body: { appointmentId: second.appointmentId } })).success)
-    const after = await call('GET', '/api/doctor/list')
-    assert.deepEqual(after.doctors[0].slots_booked[slotDate], [slotTime])
+    const listAfterCancel = await call('GET', '/api/doctor/list')
+    assert.deepEqual(listAfterCancel.doctors[0].slots_booked[slotDate], [slotTime])
 
     // doctor profile update
     assert.ok((await call('POST', '/api/doctor/update-profile', { headers: { dtoken }, body: { fees: 20000, available: false } })).success)
